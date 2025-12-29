@@ -53,7 +53,7 @@ def llm_model(prompt_txt, params=None):
     url = "https://eu-de.ml.cloud.ibm.com"
     api_key = os.getenv("api_key")
     project_id = os.getenv("project_id")  #"skills-network"
-    print(f"url: {url}\napi_key: {api_key}\nproject_id: {project_id}\n")
+
 
     credentials = {
         "url": url,
@@ -79,16 +79,229 @@ if __name__ == "__main__":
     load_dotenv()
 
     params = {
-        "max_new_tokens": 128,
-        "min_new_tokens": 10,
+        "max_new_tokens": 512,
+        "min_new_tokens": 30,
         "temperature": 0.5,
         "top_p": 0.2,
         "top_k": 1
     }
+    #
+    # # basic prompt
+    # prompt = "The wind is "
+    #
+    # # Getting a reponse from the model with the provided prompt and new parameters
+    # response = llm_model(prompt, params)
+    # print(f"prompt: {prompt}\n")
+    # print(f"response : {response}\n")
 
-    prompt = "The wind is "
 
-    # Getting a reponse from the model with the provided prompt and new parameters
-    response = llm_model(prompt, params)
-    print(f"prompt: {prompt}\n")
-    print(f"response : {response}\n")
+    # Compare responses to different prompts
+    # prompts = [
+    #     "The future of artificial intelligence is",
+    #     "Once upon a time in a distant galaxy",
+    #     "The benefits of sustainable energy include"
+    # ]
+    #
+    # for prompt in prompts:
+    #     response = llm_model(prompt, params)
+    #     print(f"prompt: {prompt}\n")
+    #     print(f"response : {response}\n")
+
+#######################################################################
+    # Zero-shot prompt #
+    # Zero-shot learning is crucial for testing a model's ability to apply its pre-trained knowledge to new,
+    # unseen tasks without additional training.
+
+    # prompt = """Classify the following statement as true or false:
+    #             'The Eiffel Tower is located in Berlin.'
+    #
+    #             Answer:
+    # """
+    # response = llm_model(prompt, params)
+    # print(f"prompt: {prompt}\n")
+    # print(f"response : {response}\n")
+
+    # 1. Prompt for Movie Review Classification
+    # movie_review_prompt = """
+    # Classify the following movie review as either 'positive' or 'negative'.
+    #
+    # Review: "I was extremely disappointed by this film. The plot was predictable, the acting was wooden, and the special effects looked cheap. I can't recommend this to anyone."
+    #
+    # Classification:
+    # """
+    #
+    # # 2. Prompt for Climate Change Paragraph Summarization
+    # climate_change_prompt = """
+    # Summarize the following paragraph about climate change in no more than two sentences.
+    #
+    # Paragraph: "Climate change refers to long-term shifts in temperatures and weather patterns. These shifts may be natural, but since the 1800s, human activities have been the main driver of climate change, primarily due to the burning of fossil fuels like coal, oil and gas, which produces heat-trapping gases. The consequences of climate change include more frequent and severe droughts, storms, and heat waves, rising sea levels, melting glaciers, and warming oceans which can directly impact biodiversity, agriculture, and human health."
+    #
+    # Summary:
+    # """
+    #
+    # # 3. Prompt for English to Spanish Translation
+    # translation_prompt = """
+    # Translate the following English phrase into Spanish.
+    #
+    # English: "I would like to order a coffee with milk and two sugars, please."
+    #
+    # Spanish:
+    # """
+    #
+    # responses = {}
+    # responses["movie_review"] = llm_model(movie_review_prompt)
+    # responses["climate_change"] = llm_model(climate_change_prompt)
+    # responses["translation"] = llm_model(translation_prompt)
+    #
+    # for prompt_type, response in responses.items():
+    #     print(f"=== {prompt_type.upper()} RESPONSE ===")
+    #     print(response)
+    #     print()
+
+#########################################
+# One-shot prompt #
+
+# params = {
+#     "max_new_tokens": 20,
+#     "temperature": 0.1,
+# }
+
+# prompt = """Here is an example of translating a sentence from English to French:
+#
+#             English: “How is the weather today?”
+#             French: “Comment est le temps aujourd'hui?”
+#
+#             Now, translate the following sentence from English to French:
+#
+#             English: “Where is the nearest supermarket?”
+#
+# """
+# response = llm_model(prompt, params)
+# print(f"prompt: {prompt}\n")
+# print(f"response : {response}\n")
+
+# formal_email_prompt = """
+# Here is an example of a formal email requesting information:
+#
+# Subject: Inquiry Regarding Product Specifications for Model XYZ-100
+#
+# Dear Customer Support Team,
+#
+# I hope this email finds you well. I am writing to request detailed specifications for your product Model XYZ-100. Specifically, I am interested in learning about its dimensions, power requirements, and compatibility with third-party accessories.
+#
+# Could you please provide this information at your earliest convenience? Additionally, I would appreciate any available documentation or user manuals that you could share.
+#
+# Thank you for your assistance in this matter.
+#
+# Sincerely,
+# John Smith
+#
+# ---
+#
+# Now, please write a formal email to a university admissions office requesting information about their application deadline and required documents for the Master's program in Computer Science:
+#
+# """
+#
+# # 2. One-shot prompt for simplifying technical concepts
+# technical_concept_prompt = """
+# Here is an example of explaining a technical concept in simple terms:
+#
+# Technical Concept: Blockchain
+# Simple Explanation: A blockchain is like a digital notebook that many people have copies of. When someone writes a new entry in this notebook, everyone's copy gets updated. Once something is written, it can't be erased or changed, and everyone can see who wrote what. This makes it useful for recording important information that needs to be secure and trusted by everyone.
+#
+# ---
+#
+# Now, please explain the following technical concept in simple terms:
+#
+# Technical Concept: Machine Learning
+# Simple Explanation:
+# """
+#
+# # 3. One-shot prompt for keyword extraction
+# keyword_extraction_prompt = """
+# Here is an example of extracting keywords from a sentence:
+#
+# Sentence: "Cloud computing offers businesses flexibility, scalability, and cost-efficiency for their IT infrastructure needs."
+# Keywords: cloud computing, flexibility, scalability, cost-efficiency, IT infrastructure
+#
+# ---
+#
+# Now, please extract the main keywords from the following sentence:
+#
+# Sentence: "Sustainable agriculture practices focus on biodiversity, soil health, water conservation, and reducing chemical inputs."
+# Keywords:
+# """
+#
+# responses = {}
+# responses["formal_email"] = llm_model(formal_email_prompt)
+# responses["technical_concept"] = llm_model(technical_concept_prompt)
+# responses["keyword_extraction"] = llm_model(keyword_extraction_prompt)
+#
+# for prompt_type, response in responses.items():
+#     print(f"=== {prompt_type.upper()} RESPONSE ===")
+#     print(response)
+#     print()
+
+
+###################################################################
+# Few-shot prompt #
+# parameters: Set `max_new_tokens` to 10, which constrains the model to generate brief responses
+
+# params = {
+#     "max_new_tokens": 10,
+# }
+#
+# prompt = """Here are few examples of classifying emotions in statements:
+#
+#             Statement: 'I just won my first marathon!'
+#             Emotion: Joy
+#
+#             Statement: 'I can't believe I lost my keys again.'
+#             Emotion: Frustration
+#
+#             Statement: 'My best friend is moving to another country.'
+#             Emotion: Sadness
+#
+#             Now, classify the emotion in the following statement:
+#             Statement: 'That movie was so scary I had to cover my eyes.’
+#
+#
+# """
+# response = llm_model(prompt, params)
+# print(f"prompt: {prompt}\n")
+# print(f"response : {response}\n")
+
+
+####################################################################
+# Chain-of-thought (CoT) prompt #
+
+# params = {
+#     "max_new_tokens": 512,
+#     "temperature": 0.5,
+# }
+#
+# prompt = """Consider the problem: 'A store had 22 apples. They sold 15 apples today and got a new delivery of 8 apples.
+#             How many apples are there now?’
+#
+#             Break down each step of your calculation
+#
+# """
+# response = llm_model(prompt, params)
+# print(f"prompt: {prompt}\n")
+# print(f"response : {response}\n")
+
+##############################################################################
+# Self-consistency  #
+
+params = {
+    "max_new_tokens": 512,
+}
+
+prompt = """When I was 6, my sister was half of my age. Now I am 70, what age is my sister?
+
+            Provide three independent calculations and explanations, then determine the most consistent result.
+
+"""
+response = llm_model(prompt, params)
+print(f"prompt: {prompt}\n")
+print(f"response : {response}\n")
